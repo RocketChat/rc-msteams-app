@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rocket.Chat</title>
+<!-- TeamsJS: lets Teams know the page loaded (required if showLoadingIndicator is ever enabled;
+     harmless and good practice either way). -->
+<script src="https://res.cdn.office.net/teams-js/2.31.0/js/MicrosoftTeams.min.js" crossorigin="anonymous"></script>
+<style>
+  :root { --rc-red: #F5455C; }
+  html, body { margin: 0; height: 100%; font-family: "Segoe UI", system-ui, sans-serif; background: #1f2329; color: #fff; }
+  #frame { border: 0; width: 100%; height: 100%; display: none; }
+  #setup { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; padding: 24px; box-sizing: border-box; }
+  #setup h1 { font-size: 20px; font-weight: 600; margin: 0; }
+  #setup p { margin: 0; color: #b5bac1; font-size: 13px; max-width: 420px; text-align: center; }
+  #url { width: min(420px, 90%); padding: 10px 12px; border-radius: 6px; border: 1px solid #444; background: #2b2f36; color: #fff; font-size: 14px; }
+  button { background: var(--rc-red); color: #fff; border: 0; border-radius: 6px; padding: 10px 22px; font-size: 14px; cursor: pointer; }
+  #err { color: #ff8fa0; font-size: 13px; min-height: 18px; }
+  #change { position: fixed; right: 8px; bottom: 8px; background: rgba(0,0,0,.55); font-size: 11px; padding: 4px 10px; border-radius: 4px; display: none; }
+</style>
+</head>
+<body>
+  <div id="setup">
+    <h1>Connect your Rocket.Chat workspace</h1>
+    <p>Enter your workspace URL. It is stored only on this device. The workspace admin must allow embedding from Microsoft Teams (see README: frame-ancestors).</p>
+    <input id="url" type="url" placeholder="https://chat.yourcompany.com" autocomplete="url">
+    <button id="go">Connect</button>
+    <div id="err"></div>
+  </div>
+  <iframe id="frame" allow="camera; microphone; clipboard-read; clipboard-write; display-capture; autoplay; fullscreen"></iframe>
+  <button id="change" title="Change workspace URL">⚙ change workspace</button>
+
+<script>
+(function () {
+  var KEY = "rc_workspace_url";
+  var setup = document.getElementById("setup"),
+      frame = document.getElementById("frame"),
+      input = document.getElementById("url"),
+      err   = document.getElementById("err"),
+      change= document.getElementById("change");
+
+  // Tell Teams the page is alive (no-op outside Teams).
+  try {
+    microsoftTeams.app.initialize().then(function () {
+      microsoftTeams.app.notifySuccess();
+    }).catch(function () {});
+  } catch (e) {}
+
+  function normalize(u) {
+    u = (u || "").trim();
+    if (!u) return null;
+    if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+    try {
+      var parsed = new URL(u);
+      if (parsed.protocol !== "https:") return null; // Teams requires HTTPS
+      return parsed.origin + parsed.pathname;
+    } catch (e) { return null; }
+  }
+
+  function load(u) {
+    frame.src = u;
+    setup.style.display = "none";
+    frame.style.display = "block";
+    change.style.display = "block";
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+  if (saved) load(saved);
+
+  document.getElementById("go").addEventListener("click", function () {
+    var u = normalize(input.value);
+    if (!u) { err.textContent = "Please enter a valid https:// URL."; return; }
+    try { localStorage.setItem(KEY, u); } catch (e) {}
+    load(u);
+  });
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("go").click(); });
+
+  change.addEventListener("click", function () {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    frame.style.display = "none"; frame.src = "about:blank";
+    change.style.display = "none"; setup.style.display = "flex";
+  });
+})();
+</script>
+</body>
+</html>

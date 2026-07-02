@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.27/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.27",
+  "version": "1.0.1",
+  "id": "80898bb0-c18f-4662-8624-c21bdd392035",
+  "developer": {
+    "name": "Rocket.Chat",
+    "websiteUrl": "https://www.rocket.chat",
+    "privacyUrl": "https://www.rocket.chat/privacy",
+    "termsOfUseUrl": "https://www.rocket.chat/terms"
+  },
+  "name": {
+    "short": "Rocket.Chat",
+    "full": "Rocket.Chat (Embedded Workspace)"
+  },
+  "description": {
+    "short": "Your Rocket.Chat workspace inside Microsoft Teams.",
+    "full": "Embeds a self-hosted Rocket.Chat workspace as a personal tab inside Microsoft Teams. This is a pure embedded-web-view wrapper: Rocket.Chat runs as-is, with its own authentication. There is no bot, no message sync, and no Graph API integration."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#F5455C",
+  "staticTabs": [
+    {
+      "entityId": "rocketchat-workspace",
+      "name": "Rocket.Chat",
+      "contentUrl": "https://candidate.qa.rocket.chat/",
+      "websiteUrl": "https://candidate.qa.rocket.chat/",
+      "scopes": ["personal"]
+    }
+  ],
+  "permissions": ["identity"],
+  "validDomains": [
+    "candidate.qa.rocket.chat",
+    "*.rocket.chat"
+  ]
+}
