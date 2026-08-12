@@ -20,7 +20,7 @@ Note: `packageName` was removed from the manifest schema in v1.17+ and is reject
 
 ## 1. Swapping in your Rocket.Chat URL
 
-The zip ships pointed at `https://open.rocket.chat/` so it sideloads and opens immediately. To point it at your own instance, edit `package/manifest.json`:
+The zip ships pointed at no specific workspace, and users can input the workspace they prefer. To point it at your own instance, edit `package/manifest.json`:
 
 1. Replace both `contentUrl` and `websiteUrl` in `staticTabs[0]` with `https://chat.yourcompany.com/`.
 2. Replace the `validDomains` entries with your domain, e.g. `"chat.yourcompany.com"` (a wildcard like `"*.yourcompany.com"` is allowed). **This is the step people miss — if the tab's domain is not in `validDomains`, Teams refuses to load it and you get a blank tab.** Note that `validDomains` must contain hostnames only, no `https://` scheme and no paths.
